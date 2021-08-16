@@ -1,3 +1,4 @@
+import db from "../share/share.js";
 class Reload extends Phaser.Scene{
     constructor(){
         super({
@@ -5,6 +6,14 @@ class Reload extends Phaser.Scene{
         })
     }
 
+    init(){
+        db.table = [
+            [-1, -1, -1],
+            [-1, -1, -1],
+            [-1, -1, -1],
+        ]
+        this.scene.start("Play");
+    }
     create(){
     }
 }

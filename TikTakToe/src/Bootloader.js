@@ -8,7 +8,9 @@
         this.load.image(["cero_opaco", "cero", "equis_opaco", "equis", "position", "reload", "tablero_win", "tablero"])
         this.load.image("font", "font/font.png");
         this.load.json("fontConfig", "font/font.json");
-
+        this.load.audio("draw", "draw.mp3");
+        this.load.audio("pop", "pop.mp3");
+        this.load.audio("win", "win.mp3");
         // agregar evento complete, es decir cuando todo esta completado llamamos a este evento
         this.load.on("complete", () => {
             const fontConfig = this.cache.json.get("fontConfig");

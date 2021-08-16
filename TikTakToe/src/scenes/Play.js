@@ -7,6 +7,9 @@ class Play extends Phaser.Scene{
     }
 
     init(){
+        this.audioDraw = this.sound.add("draw");
+        this.audioPop = this.sound.add("pop");
+        this.audioWin = this.sound.add("win");
         this.turn = Phaser.Math.Between(0, 1) // si es true el jugardor cero esta iniciando sino es el jugador cero
         
         this.canvasCenter = {
@@ -21,6 +24,35 @@ class Play extends Phaser.Scene{
 
         // tablero
         this.table = this.add.image(this.canvasCenter.width, this.canvasCenter.height, "tablero");
+        this.tableWin = this.add.image(0, 0, "tablero_win");
+        this.turnTextWin = this.add.bitmapText(0, 0, "pixelFont", "WINNER\n\nX", 16, 1)
+        this.buttonTable = this.add.image(0, 0, "reload").setInteractive();
+
+        Phaser.Display.Align.In.Center(this.turnTextWin, this.tableWin, 0, -15);
+        Phaser.Display.Align.In.Center(this.buttonTable, this.tableWin, 0, 35);
+        this.tableContainer = this.add.container(this.canvasCenter.width, this.canvasCenter.height);
+        this.tableContainer.add([
+            this.tableWin,
+            this.turnTextWin,
+            this.buttonTable,
+        ]);
+        this.tableContainer.setDepth(2);
+        this.tableContainer.setScale(0);
+
+        this.buttonTable.on(Phaser.Input.Events.POINTER_UP, () => {
+            this.add.tween({
+                targets: this.tableContainer,
+                scaleX: 0,
+                scaleY: 0,
+                duration: 1000,
+                ease: "Bounce",
+                onComplete: () => {
+                    this.scene.start("Reload");
+                }
+            })
+        })
+
+
         this.table.setAlpha(0);
         // agregar los botones para saber la posicion
         this.tableButtonPosition = [
@@ -57,6 +89,7 @@ class Play extends Phaser.Scene{
 
             button.on(Phaser.Input.Events.POINTER_UP, () => {
                 // cuando hacemos click no se puede volver a tocar esa posicion entonces le sacamos el interactivo
+                this.audioPop.play();
                 button.removeInteractive();
                 button.frame = this.textures.getFrame(`${db.player}`)
                 this.logic(index);
@@ -76,14 +109,29 @@ class Play extends Phaser.Scene{
         db.table[bi.y][bi.x] = this.turn ? 1 : 0;
 
         if (this.win().equals){
-            alert("Empate");
+            this.audioDraw.play();
+            this.turnTextWin.setText("DRAW");
+            this.add.tween({
+                targets: this.tableContainer,
+                scaleX: 1,
+                scaleY: 1,
+                duration: 500,
+                ease: "Bounce",
+            })
         }
 
         if (this.win().win) {
-            alert('Ha ganado ' + this.win().player);
+            this.audioWin.play();
+            this.turnTextWin.setText("WINNER\n\n"+ ((this.turn)  ? "O" : "X"));
+            this.add.tween({
+                targets: this.tableContainer,
+                scaleX: 1,
+                scaleY: 1,
+                duration: 500,
+                ease: "Bounce",
+            })
 
         }
-
 
         this.changeTurn();
 
