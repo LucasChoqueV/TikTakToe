@@ -1,6 +1,6 @@
 // aqui seria una especie de base de datos
 const db = {
-    player = "cero",
+    player: "cero",
     table: [
         [-1, -1, -1],
         [-1, -1, -1],
