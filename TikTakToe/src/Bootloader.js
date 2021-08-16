@@ -1,21 +1,21 @@
-class Bootloader extends Phaser.Scene {
+ class Bootloader extends Phaser.Scene {
     constructor() {
         super('Bootloader'); 
     }
 
     preload() {
-        console.log('Bootloader');
-        this.load.setPath('./assets/');
+        this.load.setPath("./assets/");
+        this.load.image(["cero_opaco", "cero", "equis_opaco", "equis", "position", "reload", "tablero_win", "tablero"])
+        this.load.image("font", "font/font.png");
+        this.load.json("fontConfig", "font/font.json");
 
-        this.load.image('logo_gamma', 'logo_gamma.png');
-
-        this.load.on('complete', () => {
-            console.log('Load complete');
-        });
-    }
-
-    create() {
-        this.add.image(this.scale.width / 2, this.scale.height / 2, 'logo_gamma');
+        // agregar evento complete, es decir cuando todo esta completado llamamos a este evento
+        this.load.on("complete", () => {
+            const fontConfig = this.cache.json.get("fontConfig");
+            // con esto estamos agregando la fuente a phaser
+            this.cache.bitmapFont.add("pixelFont", Phaser.GameObjects.RetroFont.Parse(this, fontConfig))
+            this.scene.start("Play");
+        })
     }
 }
 export default Bootloader;
