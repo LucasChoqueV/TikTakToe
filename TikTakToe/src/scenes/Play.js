@@ -8,14 +8,16 @@ class Play extends Phaser.Scene{
 
     init(){
         this.turn = Phaser.Math.Between(0, 1) // si es true el jugardor cero esta iniciando sino es el jugador cero
-        this.changeTurn();
+        
         this.canvasCenter = {
             width: this.sys.game.config.width / 2, // obtenemos la anchura total del canvas y lo dividmos en 2
             height: this.sys.game.config.height / 2, // obtenemos el alto y lo dividimos en 2
         }
+        this.turnText = this.add.bitmapText(this.canvasCenter.width, 50, "pixelFont", "TURN: " + (this.turn ? "O" : "X")).setOrigin(0.5);
+        this.changeTurn();
     }
     create(){
-        this.add.bitmapText(this.canvasCenter.width, 50, "pixelFont","TURN: " + (this.turn ? "O" : "X")).setOrigin(0.5);
+        
 
         // tablero
         this.table = this.add.image(this.canvasCenter.width, this.canvasCenter.height, "tablero");
@@ -58,10 +60,6 @@ class Play extends Phaser.Scene{
                 button.removeInteractive();
                 button.frame = this.textures.getFrame(`${db.player}`)
                 this.logic(index);
-                this.turn = !this.turn;
-                db.player = this.turn ? "cero" : "equis";
-                console.log(db.table);
-
             })
         })
         this.add.tween({
@@ -80,6 +78,15 @@ class Play extends Phaser.Scene{
         if (this.win().equals){
             alert("Empate");
         }
+
+        if (this.win().win) {
+            alert('Ha ganado ' + this.win().player);
+
+        }
+
+
+        this.changeTurn();
+
     }
 
     getBidimensional(index){
@@ -92,6 +99,7 @@ class Play extends Phaser.Scene{
     changeTurn(){
         this.turn = !this.turn;
         db.player = this.turn ? "cero" : "equis";
+        this.turnText.setText("TURN DE: " + ((this.turn)  ? "O" : "X"))
     }
 
     win(){
@@ -102,6 +110,105 @@ class Play extends Phaser.Scene{
         };
         if (!db.table.flat().some(x => x === -1)){
             output.equals = true;
+        }
+
+        // Horizontales
+        // Arriba
+        if (
+            [
+                db.table[0][0],
+                db.table[0][1],
+                db.table[0][2]
+            ].every(x => ((this.turn) ? 1 : 0) === x)
+        ) {
+            output.win = true;
+            output.equals = false;
+        }
+
+        // Medio
+        if (
+            [
+                db.table[1][0],
+                db.table[1][1],
+                db.table[1][2]
+            ].every(x => ((this.turn) ? 1 : 0) === x)
+        ) {
+            output.win = true;
+            output.equals = false;
+        }
+
+        // Abajo
+        if (
+            [
+                db.table[2][0],
+                db.table[2][1],
+                db.table[2][2]
+            ].every(x => ((this.turn) ? 1 : 0) === x)
+        ) {
+            output.win = true;
+            output.equals = false;
+        }
+
+        // VERTICAL
+        // Izquierda
+        if (
+            [
+                db.table[0][0],
+                db.table[1][0],
+                db.table[2][0]
+            ].every(x => ((this.turn) ? 1 : 0) === x)
+        ) {
+            output.win = true;
+            output.equals = false;
+        }
+
+        // Medio
+        if (
+            [
+                db.table[0][1],
+                db.table[1][1],
+                db.table[2][1]
+            ].every(x => ((this.turn) ? 1 : 0) === x)
+        ) {
+            output.win = true;
+            output.equals = false;
+        }
+
+        // Derecha
+        if (
+            [
+                db.table[0][2],
+                db.table[1][2],
+                db.table[2][2]
+            ].every(x => ((this.turn) ? 1 : 0) === x)
+        ) {
+            output.win = true;
+            output.equals = false;
+        }
+
+        // DIAGONALES
+        // UNO
+        if (
+            [
+                db.table[0][0],
+                db.table[1][1],
+                db.table[2][2]
+            ].every(x => ((this.turn) ? 1 : 0) === x)
+        ) {
+            output.win = true;
+            output.equals = false;
+        }
+
+        // DOS
+        if (
+            [
+                db.table[0][2],
+                db.table[1][1],
+                db.table[2][0]
+            ].every(x => ((this.turn) ? 1 : 0) === x)
+        ) {
+            output.win = true;
+            output.equals = false;
         }
 
         return output;
